@@ -1,0 +1,10 @@
+* Local Users
+Policies that relate to local users
+
+** inventory_local_nix_users_discover
+This bundle parses /etc/shadow and /etc/passwd to discover local users
+and their attributes. The variables defined by this discovery can be
+used by other bundles. For example reporting inventory back to
+CFEngine Enterprise Mission Portal.
+
+
