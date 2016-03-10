@@ -1,0 +1,251 @@
+# Supplemental local user inventory bundles. It is currently unclear which
+# bundles would be widely applicable for inventory purposes. These are example
+# emplimentations that leverage the data derived in
+# `inventory_passwd_shadow_discover`. They may or may not be useful, and they
+# may or may not work as several are in various states of flux.
+
+bundle agent inventory_passwd_users_all
+# @brief Inventory local users
+#
+# This bundle inventories local users as discovered by
+# `inventory_passwd_shadow_discover`.
+#
+# @param users the list of users to inventory
+#
+# **See Also:** *
+{
+  vars:
+    linux::
+      "inventory[$(inventory_passwd_shadow_discover.all_local_users)]"
+        string => "$(inventory_passwd_shadow_discover.all_local_users)",
+        meta => {
+                  "inventory",
+                  "attribute_name=Local users",
+                };
+
+    DEBUG|DEBUG_inventory_passwd_users_all::
+      "count_users"
+        int => length( "inventory_passwd_shadow_discover.all_local_users" );
+
+  reports:
+    DEBUG|DEBUG_inventory_passwd_users_all::
+      "DEBUG $(this.bundle): Found '$(count_users)' local users to inventory";
+      "DEBUG $(this.bundle): Inventorying Local User '$(inventory_passwd_shadow_discover.all_local_users)'";
+}
+
+bundle agent inventory_passwd_users_locked
+# @brief Inventory local user accounts that are locked.
+#
+# This bundle inventories local user accounts that appear to be locked
+# as discovered in `inventory_passwd_shadow_discover`. An account is
+# considered locked if the first character of the encrypted password
+# field in $(paths.shadow) is `!`.
+#
+# **See Also:**
+{
+  vars:
+    linux::
+
+      # Create local list of discovered passwd users
+      "users" slist => { @(inventory_passwd_shadow_discover.all_local_users) };
+
+      # Here we define an array entry for each user that has a class defined
+      # identifying it has a locked password and tag it for inventory.
+      "locked[$(users)]"
+        string => "$(users)",
+        ifvarclass => regcmp( "^!.*", "$(inventory_passwd_shadow_discover.encrypted_password[$(users)])"),
+        meta    => {
+                     "inventory",
+                     "attribute_name=Local user account locked"};
+
+  reports:
+    DEBUG|DEBUG_inventory_passwd_users_locked::
+      "DEBUG $(this.bundle): '$(users)' account appears locked"
+        ifvarclass => isvariable("locked[$(users)]");
+}
+
+bundle agent inventory_local_nix_users_password_change(users)
+# @brief Inventory days since last password change for local user
+# accounts
+# @param users list of users to consider for inventory
+#
+# **Note:** This bundle depends on
+# `inventory_passwd_shadow_discover`. Local uses without valid
+# password hashes will not be considered.
+#
+# **See Also:**
+# * `inventory_local_users`
+# * `inventory_local_users_locked`
+# * `inventory_local_users_password_empty`
+{
+  vars:
+    linux::
+      "now" int => now();
+      "days_since_epoch" string => eval( "$(now)/24/3600", "math", "infix" );
+
+      "days_since[$(users)]"
+        string => format("%d", eval( "$(days_since_epoch)-$(inventory_passwd_shadow_discover.epoch_last_password_change[$(users)])", "math", "infix" ) ),
+        ifvarclass => "$(inventory_passwd_shadow_discover.all_local_users_canonified_map[$(users)])_password_valid_hash",
+        meta => { "inventory", "attribute_name=Days since password change for $(users)"};
+
+    # We guard this so that we do not end up with an entry in the
+      # inventory interface that includes cf_null
+
+      # We calculate the date of the last password change in human
+      # readable form by subtracting days since password change from now
+      # and formatting that with strftime.  have_password_changes::
+      "date_last[$(users)]"
+        string => strftime("localtime", "%Y-%m-%d %T",
+                           format("%d", eval( "$(now) - days_since[$(users)])", "math", "infix" ))),
+        ifvarclass => "$(inventory_passwd_shadow_discover.all_local_users_canonified_map[$(users)])_password_valid_hash",
+        meta => {
+                  "inventory",
+                  "attribute_name=Last password change for $(users)",
+                 };
+
+      # NEEDED?
+#  classes:
+#   "have_password_changes" expression => isgreaterthan(length("local_users"), 0);
+
+  reports:
+    DEBUG|DEBUG_inventory_local_nix_users_password_change::
+      "DEBUG $(this.bundle): Days since local '$(users)' users password change = '$(days_since[$(users)])'"
+        ifvarclass => "$(inventory_passwd_shadow_discover.all_local_users_canonified_map[$(users)])_password_valid_hash";
+      "DEBUG $(this.bundle): Date local '$(users)' last changed password = '$(date_last[$(users)])' epoc = $(inventory_passwd_shadow_discover.epoch_last_password_change[$(users)])"
+        ifvarclass => "$(inventory_passwd_shadow_discover.all_local_users_canonified_map[$(users)])_password_valid_hash";
+      "DEBUG $(this.bundle): Not inventorying last password change date for '$(users)' since the user has an invalid password hash"
+        ifvarclass => not("$(inventory_passwd_shadow_discover.all_local_users_canonified_map[$(users)])_password_valid_hash");
+}
+
+bundle agent inventory_local_users_password_empty
+# @brief Inventory local user accounts that that have empty passwords
+#
+# This bundle inventories local user accounts that have empty passwords
+# discovered in `cfe_autorun_inventory_local_users_discover`.
+#
+# **See Also:**
+# * `inventory_local_users_password_last_change`
+# * `inventory_local_users`
+# * `inventory_local_users_locked`
+{
+  vars:
+    linux::
+      "local_users"
+        slist => { @(inventory_passwd_shadow_discover.all_local_users) };
+
+      "empty[$(local_users)]"
+        string => "TRUE",
+        ifvarclass => "$(inventory_passwd_shadow_discover.all_local_users_canonified_map[$(local_users)])_password_empty",
+        comment => "We need to build an intermediary array of the empty users so
+                    that we can report a unified list for inventory";
+
+      "tmp_empty_users"
+        #slist   => sort(getindices("locked"), "lex"),
+        slist   => getindices("empty"),
+        comment => "intermediary list so that we can filter out cf_null";
+
+    # We guard this so that we do not end up with an entry in the inventory interface that includes cf_null
+    have_empty_password_users::
+      "empty_users"
+        slist   => getindices("empty"),
+        meta    => {
+                     "inventory",
+                     "attribute_name=Local users with empty passwords",
+                     "derived_from=bundle:cfe_autorun_inventory_local_users_discover" },
+        comment => "Report on the list of users with empty passwords so that they show up in
+                    Mission Portal inventory. Empty passwords may be a security risk";
+
+  classes:
+    linux::
+      "have_empty_password_users" expression => isgreaterthan(length("tmp_empty_users"), 0);
+
+  reports:
+    "DEBUG|DEBUG_$(this.bundle)"::
+      "$(this.bundle): '$(empty_users)' password appears empty"
+        ifvarclass => "have_empty_password_users";
+}
+bundle agent inventory_passwd_users_in_whitelist(users, whitelist)
+# @brief Inventory the local users that are present and in the
+# provided whitelist
+#
+# @param users A list of local users that should be inventoried based
+# on presence in the whitelist
+#
+# @param whitelist A list of local users that should be inventoried if
+# present.
+#
+# Users and whitelist were taken as parameters so that this
+# bundle can more easily be tested.
+{
+  vars:
+      # The users in the whitelist that are in the list of users to
+      # consider are the users we should inventory. We could simply
+      # tag this list, however lists are not displayed very
+      # beautifully in Mission Portal so we will take this list and
+      # convert it into an array of strings for inventory.
+      "whitelist_local_users"
+        slist => intersection( whitelist, users);
+
+      # Here we just generate an array so that it looks nicer in
+      # Mission Portal
+      "inventory[$(whitelist_local_users)]"
+        string => "$(whitelist_local_users)",
+        meta => { "inventory",
+                  "attribute_name=Local User",
+                  "attribute_name=Local Whitelist User" };
+
+    DEBUG|DEBUG_inventory_passwd_users_in_whitelist::
+      "count_whitelist_local_users"
+        int => length( whitelist_local_users );
+
+  reports:
+    DEBUG|DEBUG_inventory_passwd_users_in_whitelist::
+      "DEBUG $(this.bundle): Found '$(count_whitelist_local_users)' whitelisted local users to inventory";
+      "DEBUG $(this.bundle): Inventorying Local User '$(inventory[$(whitelist_local_users)])'"
+        ifvarclass => isvariable("inventory[$(whitelist_local_users)]");
+}
+
+bundle agent inventory_local_nix_users_password_change_blacklist(users, blacklist)
+{
+  vars:
+      "filtered_users"
+        slist => difference( users, blacklist );
+
+  methods:
+      "Inventory Users Last Password Change"
+        usebundle => inventory_local_nix_users_password_change( @(filtered_users) );
+
+  reports:
+    "DEBUG|DEBUG_$(this.bundle)"::
+      "DEBUG $(this.bundle): Inventorying '$(filtered_users)' based on blacklist";
+}
+
+bundle agent inventory_local_nix_users_password_over_threshold(threshold)
+{
+  vars:
+      "inventoried_users"
+         slist => getindices("inventory_local_nix_users_password_change.days_since");
+
+      "inventory[$(inventoried_users)]"
+        string => "$(inventoried_users)",
+        ifvarclass => isgreaterthan("$(inventory_local_nix_users_password_change.days_since[$(inventoried_users)])", $(threshold)),
+        meta => { "inventory", "attribute_name=Local users with password older than $(threshold)" };
+
+      "idx" slist => getindices(inventory);
+      "count_inventoried_users_over_threshold"
+        int => length(idx);
+
+  classes:
+      # Define a class to indicate this host has local users with
+      # password over the threshold. This class can easily be used by
+      # Mission Portal for triggering notifications.
+     # "local_users_password_age_over_threshold"
+     #   scope => "namespace",
+     #   meta => { "report" },
+     #   expression => isgreaterthan( "$(count_inventoried_users_over_threshold)", 0 );
+
+  reports:
+    DEBUG|DEBUG_inventory_local_nix_users_password_over_threshold::
+      "DEBUG $(this.bundle): User '$(idx)' days since last password change '$(inventory_local_nix_users_password_change.days_since[$(idx)])' exceeds threshold '$(threshold)'"
+        ifvarclass => isvariable("inventory[$(idx)]");
+}

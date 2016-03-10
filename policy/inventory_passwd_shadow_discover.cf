@@ -1,0 +1,179 @@
+bundle agent inventory_passwd_shadow_discover
+# @brief Discover local user information
+
+   # Originally
+   # bundle agent inventory_local_nix_users_discover
+   # @brief Discover local user information
+
+   # Considering
+   # bundle agent inventory_passwd_shadow_discover(passwd_path, shadow_path)
+   # @brief Discover local user information from /etc/passwd and /etc/shadow
+
+   # Chose
+   # bundle agent inventory_passwd_shadow_discover
+   # Instead of taking paths as parameters, the paths are set based on
+   # def.passwd_file and def.shadow_file if they exist. If they do not
+   # exist, sensible defaults are chosen.
+
+#
+# This bundle does local user discovery by parsing /etc/passwd and
+# /etc/shadow. The variables populated by this discovery are **not**
+# automatically reported back to Mission Portal. Inventory of this
+# information is provided by companion bundles.
+#
+# **See Also:**
+# `inventory_local_users_password_last_change`
+# `inventory_local_users`
+# `inventory_local_users_locked`
+# `inventory_local_users_password_empty`
+{
+  classes:
+      # Only tested on Linux
+      "supported_platform" expression => "linux";
+
+  vars:
+    supported_platform::
+      # We look for `passwd_file` in def, and default to something
+      # sensible if not found. This should work well with upcoming
+      # fixes to def.json support.
+      "passwd_file"
+        string => "$(def.passwd_file)",
+        ifvarclass => isvariable("def.passwd_file");
+
+      # Ideally we can replace this two promise implementation with a
+      # single promise using ifelse function when the ifelse function
+      # can use the result of isvariable as a class input.
+      "passwd_file"
+        string => "/etc/passwd",
+        ifvarclass => not( isvariable("def.passwd_file") );
+
+      "shadow_file"
+        string => "$(def.shadow_file)",
+        ifvarclass => isvariable("def.shadow_file");
+
+      "shadow_file"
+        string => "/etc/shadow",
+        ifvarclass => not( isvariable("def.shadow_file") );
+
+      # 500 local users and 1MB of data for passwd or shadow seems like a reasonable limit.
+      "shadow_data"
+        data => data_readstringarray( $(shadow_file), "", ":", 500, 1M );
+      "passwd_data"
+        data => data_readstringarray( $(passwd_file), "", ":", 500, 1M );
+
+      "all_local_users"
+        slist => getindices("passwd_data");
+
+    supported_platform.(DEBUG|DEBUG_inventory_passwd_shadow_discover)::
+      "all_local_users_str"
+        string => join(", ", all_local_users),
+        comment => "Having a combined string of users is useful for debug reports";
+
+    supported_platform::
+      "all_local_users_canonified_map[$(all_local_users)]"
+        string => canonify($(all_local_users));
+
+      "all_local_users_canonified_list"
+        slist => maplist("$(local_users_canonified_list[$(this)])", "local_users"),
+        comment => "A canonified list is useful when dealing with variables
+                    because user names may contain characters that are invalid
+                    in variable names";
+
+      "epoch_last_password_change[$(all_local_users)]"
+        string => "$(shadow_data[$(all_local_users)][1])";
+
+      "min_password_age[$(all_local_users)]"
+        string => "$(shadow_data[$(all_local_users)][2])";
+
+      "max_password_age[$(all_local_users)]"
+        string => "$(shadow_data[$(all_local_users)][3])";
+
+      "password_warning_period[$(all_local_users)]"
+        string => "$(shadow_data[$(all_local_users)][4])";
+
+      "password_inactivity_period[$(all_local_users)]"
+        string => "$(shadow_data[$(all_local_users)][5])";
+
+      "account_expiration_date[$(all_local_users)]"
+        string => "$(shadow_data[$(all_local_users)][6])";
+
+      "numeric_user_id[$(all_local_users)]"
+        string => "$(passwd_data[$(all_local_users)][1])";
+
+      "numeric_group_id[$(all_local_users)]"
+        string => "$(passwd_data[$(all_local_users)][2])";
+
+      "comment[$(all_local_users)]"
+        string => "$(passwd_data[$(all_local_users)][3])";
+
+      "home_directory[$(all_local_users)]"
+        string => "$(passwd_data[$(all_local_users)][4])";
+
+      "shell[$(all_local_users)]"
+        string => "$(passwd_data[$(all_local_users)][5])";
+
+      "encrypted_password[$(all_local_users)]"
+        string => "$(shadow_data[$(all_local_users)][0])";
+
+  classes:
+    supported_platform::
+      "$(all_local_users)_password_locked"
+        expression => regcmp( "^!.*", "$(encrypted_password[$(all_local_users)])" ),
+        scope => "namespace",
+        comment => "A password field starting with exclimation point is a locked account";
+
+      "$(all_local_users)_password_empty"
+        expression => regcmp( "", "$(encrypted_password[$(all_local_users)])" ),
+        scope => "namespace",
+        comment => "An empty password field may allow passwordless login, it
+                    depends on the application reading the shadow file.";
+
+      "$(all_local_users)_password_valid_hash"
+        expression => regcmp( "\Q$\E(1|2a|5|6)\$.*", "$(encrypted_password[$(all_local_users)])" ),
+        scope => "namespace",
+        comment => "If the hashed password matches this regex then we think we
+                    have a valid password hash. Note: It may or may not be
+                    valid for the speicifc platform. For example EL5 does not
+                    support sha512 hashed passwords (hashes starting with $6$).";
+
+      "$(all_local_users)_password_invalid_hash"
+        not => "$(all_local_users_canonified_map[$(all_local_users)])_password_valid_hash",
+        scope => "namespace",
+        comment => "If the password has is not valid it must be invalid. This
+                    could mean locked, empty or otherwise invalid.";
+
+  vars:
+    DEBUG|DEBUG_inventory_passwd_shadow_discover::
+    "_myvars" slist => variablesmatching("$(this.namespace):$(this.bundle)\..*");
+
+  reports:
+    !supported_platform::
+      "$(this.bundle) not tested on your platform";
+
+    DEBUG|DEBUG_inventory_passwd_shadow_discover::
+      "DEBUG $(this.bundle): Defined '$(_myvars)'";
+      "DEBUG $(this.bundle): Discovered: '$(all_local_users_str)'";
+      "DEBUG $(this.bundle): Epoch last password change: '$(all_local_users)'='$(epoch_last_password_change[$(all_local_users)])'";
+      "DEBUG $(this.bundle): Min Password Age: '$(all_local_users)'='$(min_password_age[$(all_local_users)])'";
+      "DEBUG $(this.bundle): Max Password Age: '$(all_local_users)'='$(max_password_age[$(all_local_users)])'";
+      "DEBUG $(this.bundle): Password Warning Period: '$(all_local_users)'='$(password_warning_period[$(all_local_users)])'";
+      "DEBUG $(this.bundle): Password Inactivity Period: '$(all_local_users)'='$(password_inactivity_period[$(all_local_users)])'";
+      "DEBUG $(this.bundle): Account Expiration Date: '$(all_local_users)'='$(account_expiration_date[$(all_local_users)])'";
+      "DEBUG $(this.bundle): Numeric User ID: '$(all_local_users)'='$(numeric_user_id[$(all_local_users)])'";
+      "DEBUG $(this.bundle): Username/Comment: '$(all_local_users)'='$(comment[$(all_local_users)])'";
+      "DEBUG $(this.bundle): Home Directory: '$(all_local_users)'='$(home_directory[$(all_local_users)])'";
+      "DEBUG $(this.bundle): Shell: '$(all_local_users)'='$(shell[$(all_local_users)])'";
+      "DEBUG $(this.bundle): '$(all_local_users)' account is locked"
+        ifvarclass => "$(all_local_users_canonified_list)_password_locked";
+
+      "DEBUG $(this.bundle): $(all_local_users)' password is empty"
+        ifvarclass => "$(all_local_users_canonified_map[$(all_local_users)])_password_empty";
+
+      "DEBUG $(this.bundle): '$(all_local_users)' password appears valid"
+        ifvarclass => "$(all_local_users_canonified_map[$(all_local_users)])_password_valid_hash";
+
+      "DEBUG $(this.bundle): '$(all_local_users)' password appears invalid"
+        ifvarclass => "$(all_local_users_canonified_map[$(all_local_users)])_password_invalid_hash";
+
+}
+
