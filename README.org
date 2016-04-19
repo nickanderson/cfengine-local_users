@@ -1,12 +1,47 @@
-* Local Users
+#+TITLE: CFEngine Local Users
+
 Policies that relate to local users
 
-** inventory_passwd_shadow_discover
+* Installation & Configuration
+
+This policy installs under =$MASTERFILES/services= using the [[file:./Makefile][=Makefile=]].
+
+#+BEGIN_SRC sh
+make install
+#+END_SRC
+
+Or to install to a specific location:
+
+#+BEGIN_SRC sh
+make install MASTERFILES=/tmp/my_masterfiles
+#+END_SRC
+
+The policy must also be included into your policy set, and the bundles desired
+must be actuated if they are not automatically actuated. If you are running
+CFEngine 3.7.3, 3.8.1 or later you can define the =services_autorun= class to
+enable the autorun feature and have =inventory_passwd_shadow_discover= actuated
+automatically.
+
+For example:
+
+#+BEGIN_SRC sh
+echo '
+{
+  "inputs": [ "services/local_users/def.cf" ],
+  "classes": {
+    "services_autorun": ["any"]
+  }
+}' > /var/cfengine/masterfiles/def.json
+#+END_SRC
+
+* inventory_passwd_shadow_discover
+
 This bundle parses =/etc/shadow and =/etc/passwd= to discover local users and
 their attributes. The variables defined by this discovery can be used by other
 bundles. Please reference [[file:./policy/supplemental.cf][supplemental.cf]] for examples of how to use this
 bundle.
 
+This is an =autorun= bundle when running on a supported platform.
 
 *** Variables Defined
 

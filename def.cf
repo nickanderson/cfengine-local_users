@@ -1,8 +1,8 @@
-bundle agent local_users_file_control
+bundle common local_users_file_control
 {
   vars:
     "input[inventory_local_nix_users_discover]"
-      string => "$(this.promise_dirname)/policy/inventory_local_nix_users_discover.cf";
+      string => "$(this.promise_dirname)/policy/inventory_passwd_shadow_discover.cf";
 
     "inputs" slist => getvalues(input);
 }
@@ -10,18 +10,4 @@ bundle agent local_users_file_control
 body file control
 {
   inputs => { @(local_users_file_control.inputs) };
-}
-
-bundle agent local_users
-{
-  methods:
-    linux::
-      "discover_local_users"
-        usebundle => inventory_local_nix_users_discover,
-        depends_on => { "local_users_reports_debug" }; # so that the debug reports order is not confusing
-
-  reports:
-    DEBUG|DEBUG_local_users::
-      "DEBUG $(this.bundle)"
-        handle => "local_users_reports_debug";
 }

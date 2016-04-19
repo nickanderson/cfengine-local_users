@@ -1,21 +1,5 @@
 bundle agent inventory_passwd_shadow_discover
 # @brief Discover local user information
-
-   # Originally
-   # bundle agent inventory_local_nix_users_discover
-   # @brief Discover local user information
-
-   # Considering
-   # bundle agent inventory_passwd_shadow_discover(passwd_path, shadow_path)
-   # @brief Discover local user information from /etc/passwd and /etc/shadow
-
-   # Chose
-   # bundle agent inventory_passwd_shadow_discover
-   # Instead of taking paths as parameters, the paths are set based on
-   # def.passwd_file and def.shadow_file if they exist. If they do not
-   # exist, sensible defaults are chosen.
-
-#
 # This bundle does local user discovery by parsing /etc/passwd and
 # /etc/shadow. The variables populated by this discovery are **not**
 # automatically reported back to Mission Portal. Inventory of this
@@ -27,12 +11,15 @@ bundle agent inventory_passwd_shadow_discover
 # `inventory_local_users_locked`
 # `inventory_local_users_password_empty`
 {
+  meta:
+    "tags" slist => { "autorun" };
+
   classes:
       # Only tested on Linux
-      "supported_platform" expression => "linux";
+      "_$(this.bundle)_supported_platform" expression => "linux";
 
   vars:
-    supported_platform::
+    "_$(this.bundle)_supported_platform"::
       # We look for `passwd_file` in def, and default to something
       # sensible if not found. This should work well with upcoming
       # fixes to def.json support.
@@ -64,12 +51,14 @@ bundle agent inventory_passwd_shadow_discover
       "all_local_users"
         slist => getindices("passwd_data");
 
-    supported_platform.(DEBUG|DEBUG_inventory_passwd_shadow_discover)::
+    "_$(this.bundle)_supported_platform.(DEBUG|DEBUG_inventory_passwd_shadow_discover)"::
+
       "all_local_users_str"
         string => join(", ", all_local_users),
         comment => "Having a combined string of users is useful for debug reports";
 
-    supported_platform::
+    "_$(this.bundle)_supported_platform"::
+
       "all_local_users_canonified_map[$(all_local_users)]"
         string => canonify($(all_local_users));
 
@@ -116,7 +105,7 @@ bundle agent inventory_passwd_shadow_discover
         string => "$(shadow_data[$(all_local_users)][0])";
 
   classes:
-    supported_platform::
+    "_$(this.bundle)_supported_platform"::
       "$(all_local_users)_password_locked"
         expression => regcmp( "^!.*", "$(encrypted_password[$(all_local_users)])" ),
         scope => "namespace",
@@ -147,7 +136,7 @@ bundle agent inventory_passwd_shadow_discover
     "_myvars" slist => variablesmatching("$(this.namespace):$(this.bundle)\..*");
 
   reports:
-    !supported_platform::
+    "!_$(this.bundle)_supported_platform"::
       "$(this.bundle) not tested on your platform";
 
     DEBUG|DEBUG_inventory_passwd_shadow_discover::
@@ -174,6 +163,4 @@ bundle agent inventory_passwd_shadow_discover
 
       "DEBUG $(this.bundle): '$(all_local_users)' password appears invalid"
         ifvarclass => "$(all_local_users_canonified_map[$(all_local_users)])_password_invalid_hash";
-
 }
-
