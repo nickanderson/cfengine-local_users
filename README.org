@@ -34,14 +34,39 @@ echo '
 }' > /var/cfengine/masterfiles/def.json
 #+END_SRC
 
+To extend Mission Portal Inventory with this information you will need to use
+one of the supplemental bundles, or craft your own to tag only the information
+you desire.
+
+For example:
+
+Adding [[file:./policy/supplemental.cf][=supplemental.cf=]] to the augments file.
+
+#+BEGIN_SRC sh
+echo '
+{
+  "inputs": [ "services/local_users/def.cf", "services/local_users/policy/supplemental.cf" ],
+  "classes": {
+    "services_autorun": ["any"]
+  }
+}' > /var/cfengine/masterfiles/def.json
+#+END_SRC
+
+And adding a promise in =services/main.cf= to actuate the supplemental bundle
+=inventory_passwd_users_all= which inventories all local users found in
+=/etc/passwd= will result in additional attributes being added to Mission
+Portal.
+
+[[file:./media/inventory_local_users.png]]
+
 * inventory_passwd_shadow_discover
 
-This bundle parses =/etc/shadow and =/etc/passwd= to discover local users and
-their attributes. The variables defined by this discovery can be used by other
-bundles. Please reference [[file:./policy/supplemental.cf][supplemental.cf]] for examples of how to use this
-bundle.
-
-This is an =autorun= bundle when running on a supported platform.
+This is an =autorun= bundle when actuated on supported platforms. This bundle
+parses =/etc/shadow and =/etc/passwd= to discover local users and their
+attributes. The variables defined by this discovery can be used by other
+bundles. **Note:** This bundle does **not** tag variables to extend CFEngine
+Enterprise Mission Portal inventory. Please reference [[file:./policy/supplemental.cf][supplemental.cf]] for
+examples of how to use this bundle.
 
 *** Variables Defined
 
