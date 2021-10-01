@@ -1,7 +1,9 @@
 {
     "vars":{
-        "control_common_bundlesequence_classification": [ "inventory_passwd_shadow_discover" ]
+        "control_common_bundlesequence_classification": [ "inventory_passwd_shadow_discover", "inventory_passwd_users_all" ]
     },
 
-    "inputs": [ "services/inventory-local-users/inventory_passwd_shadow_discover.cf" ]
+    "inputs": [ "services/inventory-local-users/inventory_passwd_shadow_discover.cf",
+                "services/inventory-local-users/supplemental.cf"
+              ]
 }
