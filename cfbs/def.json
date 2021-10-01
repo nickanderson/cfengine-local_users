@@ -1,0 +1,7 @@
+{
+    "vars":{
+        "control_common_bundlesequence_classification": [ "" ]
+    },
+
+    "inputs": [ "services/inventory-local-users/inventory_passwd_shadow_discover.cf" ]
+}
