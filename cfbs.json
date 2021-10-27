@@ -1,9 +1,17 @@
 {
-    "name": "inventory-local-users",
-    "description": "Inventory the local users on the system with their attributes",
-    "tags": ["wip", "untested"],
-    "version": "1.0.0",
-    "steps": ["copy ./policy/inventory_passwd_shadow_discover.cf services/inventory-local-users/",
-              "json cfbs/def.json def.json"
-             ]
+  "name": "Inventory local users cfbs module",
+  "description": "Inventory the local users on the system with their attributes",
+  "type": "module",
+  "provides": {
+    "inventory-local-users": {
+      "name": "inventory-local-users",
+      "description": "Inventory the local users on the system with their attributes",
+      "tags": ["untested"],
+      "version": "1.0.0",
+      "steps": [
+        "copy ./policy/inventory_passwd_shadow_discover.cf services/inventory-local-users/",
+        "json cfbs/def.json def.json"
+      ]
+    }
+  }
 }
