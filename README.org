@@ -2,60 +2,16 @@
 
 Policies that relate to local users
 
-* Installation & Configuration
+* Installation via cfbs
 
-This policy installs under =$MASTERFILES/services= using the [[file:./Makefile][=Makefile=]].
+#+begin_example
+  ❯ cfbs search local-users
+  inventory-local-users - Inventory the local users on the system with their attributes
+  ❯ cfbs add inventory-local-users
+  Added module: inventory-local-users
+#+end_example
 
-#+BEGIN_SRC sh
-make install
-#+END_SRC
 
-Or to install to a specific location:
-
-#+BEGIN_SRC sh
-make install MASTERFILES=/tmp/my_masterfiles
-#+END_SRC
-
-The policy must also be included into your policy set, and the bundles desired
-must be actuated if they are not automatically actuated. If you are running
-CFEngine 3.7.3, 3.8.1 or later you can define the =services_autorun= class to
-enable the autorun feature and have =inventory_passwd_shadow_discover= actuated
-automatically.
-
-For example:
-
-#+BEGIN_SRC sh
-echo '
-{
-  "inputs": [ "services/local_users/def.cf" ],
-  "classes": {
-    "services_autorun": ["any"]
-  }
-}' > /var/cfengine/masterfiles/def.json
-#+END_SRC
-
-To extend Mission Portal Inventory with this information you will need to use
-one of the supplemental bundles, or craft your own to tag only the information
-you desire.
-
-For example:
-
-Adding [[file:./policy/supplemental.cf][=supplemental.cf=]] to the augments file.
-
-#+BEGIN_SRC sh
-echo '
-{
-  "inputs": [ "services/local_users/def.cf", "services/local_users/policy/supplemental.cf" ],
-  "classes": {
-    "services_autorun": ["any"]
-  }
-}' > /var/cfengine/masterfiles/def.json
-#+END_SRC
-
-And adding a promise in =services/main.cf= to actuate the supplemental bundle
-=inventory_passwd_users_all= which inventories all local users found in
-=/etc/passwd= will result in additional attributes being added to Mission
-Portal.
 
 [[file:./media/inventory_local_users.png]]
 
