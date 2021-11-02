@@ -1,0 +1,28 @@
+bundle agent inventory_passwd_users_all
+# @brief Inventory local users
+#
+# This bundle inventories local users as discovered by
+# `inventory_passwd_shadow_discover`.
+#
+# @param users the list of users to inventory
+#
+# **See Also:** *
+{
+  vars:
+    linux::
+      "inventory[$(inventory_passwd_shadow_discover.all_local_users)]"
+        string => "$(inventory_passwd_shadow_discover.all_local_users)",
+        meta => {
+                  "inventory",
+                  "attribute_name=Local users",
+        };
+
+    DEBUG|DEBUG_inventory_passwd_users_all::
+      "count_users"
+        int => length( "inventory_passwd_shadow_discover.all_local_users" );
+
+  reports:
+    DEBUG|DEBUG_inventory_passwd_users_all::
+      "DEBUG $(this.bundle): Found '$(count_users)' local users to inventory";
+      "DEBUG $(this.bundle): Inventorying Local User '$(inventory_passwd_shadow_discover.all_local_users)'";
+}

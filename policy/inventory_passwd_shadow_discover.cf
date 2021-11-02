@@ -1,4 +1,4 @@
-bundle agent inventory_passwd_shadow_discover
+bundle agent parsed_etc_passwd_shadow
 # @brief Discover local user information
 # This bundle does local user discovery by parsing /etc/passwd and
 # /etc/shadow. The variables populated by this discovery are **not**
@@ -51,7 +51,7 @@ bundle agent inventory_passwd_shadow_discover
       "all_local_users"
         slist => getindices("passwd_data");
 
-    "_$(this.bundle)_supported_platform.(DEBUG|DEBUG_inventory_passwd_shadow_discover)"::
+    "_$(this.bundle)_supported_platform.(DEBUG|DEBUG_parsed_etc_passwd_shadow)"::
 
       "all_local_users_str"
         string => join(", ", all_local_users),
@@ -132,14 +132,14 @@ bundle agent inventory_passwd_shadow_discover
                     could mean locked, empty or otherwise invalid.";
 
   vars:
-    DEBUG|DEBUG_inventory_passwd_shadow_discover::
+    DEBUG|DEBUG_parsed_etc_passwd_shadow::
     "_myvars" slist => variablesmatching("$(this.namespace):$(this.bundle)\..*");
 
   reports:
     "!_$(this.bundle)_supported_platform"::
       "$(this.bundle) not tested on your platform";
 
-    DEBUG|DEBUG_inventory_passwd_shadow_discover::
+    DEBUG|DEBUG_parsed_etc_passwd_shadow::
       "DEBUG $(this.bundle): Defined '$(_myvars)'";
       "DEBUG $(this.bundle): Discovered: '$(all_local_users_str)'";
       "DEBUG $(this.bundle): Epoch last password change: '$(all_local_users)'='$(epoch_last_password_change[$(all_local_users)])'";

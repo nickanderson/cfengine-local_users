@@ -1,43 +1,14 @@
 # Supplemental local user inventory bundles. It is currently unclear which
 # bundles would be widely applicable for inventory purposes. These are example
 # emplimentations that leverage the data derived in
-# `inventory_passwd_shadow_discover`. They may or may not be useful, and they
+# `parsed_etc_passwd_shadow`. They may or may not be useful, and they
 # may or may not work as several are in various states of flux.
-
-bundle agent inventory_passwd_users_all
-# @brief Inventory local users
-#
-# This bundle inventories local users as discovered by
-# `inventory_passwd_shadow_discover`.
-#
-# @param users the list of users to inventory
-#
-# **See Also:** *
-{
-  vars:
-    linux::
-      "inventory[$(inventory_passwd_shadow_discover.all_local_users)]"
-        string => "$(inventory_passwd_shadow_discover.all_local_users)",
-        meta => {
-                  "inventory",
-                  "attribute_name=Local users",
-                };
-
-    DEBUG|DEBUG_inventory_passwd_users_all::
-      "count_users"
-        int => length( "inventory_passwd_shadow_discover.all_local_users" );
-
-  reports:
-    DEBUG|DEBUG_inventory_passwd_users_all::
-      "DEBUG $(this.bundle): Found '$(count_users)' local users to inventory";
-      "DEBUG $(this.bundle): Inventorying Local User '$(inventory_passwd_shadow_discover.all_local_users)'";
-}
 
 bundle agent inventory_passwd_users_locked
 # @brief Inventory local user accounts that are locked.
 #
 # This bundle inventories local user accounts that appear to be locked
-# as discovered in `inventory_passwd_shadow_discover`. An account is
+# as discovered in `parsed_etc_passwd_shadow`. An account is
 # considered locked if the first character of the encrypted password
 # field in $(paths.shadow) is `!`.
 #
@@ -47,13 +18,13 @@ bundle agent inventory_passwd_users_locked
     linux::
 
       # Create local list of discovered passwd users
-      "users" slist => { @(inventory_passwd_shadow_discover.all_local_users) };
+      "users" slist => { @(parsed_etc_passwd_shadow.all_local_users) };
 
       # Here we define an array entry for each user that has a class defined
       # identifying it has a locked password and tag it for inventory.
       "locked[$(users)]"
         string => "$(users)",
-        ifvarclass => regcmp( "^!.*", "$(inventory_passwd_shadow_discover.encrypted_password[$(users)])"),
+        ifvarclass => regcmp( "^!.*", "$(parsed_etc_passwd_shadow.encrypted_password[$(users)])"),
         meta    => {
                      "inventory",
                      "attribute_name=Local user account locked"};
@@ -70,7 +41,7 @@ bundle agent inventory_local_nix_users_password_change(users)
 # @param users list of users to consider for inventory
 #
 # **Note:** This bundle depends on
-# `inventory_passwd_shadow_discover`. Local uses without valid
+# `parsed_etc_passwd_shadow`. Local uses without valid
 # password hashes will not be considered.
 #
 # **See Also:**
@@ -84,8 +55,8 @@ bundle agent inventory_local_nix_users_password_change(users)
       "days_since_epoch" string => eval( "$(now)/24/3600", "math", "infix" );
 
       "days_since[$(users)]"
-        string => format("%d", eval( "$(days_since_epoch)-$(inventory_passwd_shadow_discover.epoch_last_password_change[$(users)])", "math", "infix" ) ),
-        ifvarclass => "$(inventory_passwd_shadow_discover.all_local_users_canonified_map[$(users)])_password_valid_hash",
+        string => format("%d", eval( "$(days_since_epoch)-$(parsed_etc_passwd_shadow.epoch_last_password_change[$(users)])", "math", "infix" ) ),
+        ifvarclass => "$(parsed_etc_passwd_shadow.all_local_users_canonified_map[$(users)])_password_valid_hash",
         meta => { "inventory", "attribute_name=Days since password change for $(users)"};
 
     # We guard this so that we do not end up with an entry in the
@@ -97,7 +68,7 @@ bundle agent inventory_local_nix_users_password_change(users)
       "date_last[$(users)]"
         string => strftime("localtime", "%Y-%m-%d %T",
                            format("%d", eval( "$(now) - days_since[$(users)])", "math", "infix" ))),
-        ifvarclass => "$(inventory_passwd_shadow_discover.all_local_users_canonified_map[$(users)])_password_valid_hash",
+        ifvarclass => "$(parsed_etc_passwd_shadow.all_local_users_canonified_map[$(users)])_password_valid_hash",
         meta => {
                   "inventory",
                   "attribute_name=Last password change for $(users)",
@@ -110,11 +81,11 @@ bundle agent inventory_local_nix_users_password_change(users)
   reports:
     DEBUG|DEBUG_inventory_local_nix_users_password_change::
       "DEBUG $(this.bundle): Days since local '$(users)' users password change = '$(days_since[$(users)])'"
-        ifvarclass => "$(inventory_passwd_shadow_discover.all_local_users_canonified_map[$(users)])_password_valid_hash";
-      "DEBUG $(this.bundle): Date local '$(users)' last changed password = '$(date_last[$(users)])' epoc = $(inventory_passwd_shadow_discover.epoch_last_password_change[$(users)])"
-        ifvarclass => "$(inventory_passwd_shadow_discover.all_local_users_canonified_map[$(users)])_password_valid_hash";
+        ifvarclass => "$(parsed_etc_passwd_shadow.all_local_users_canonified_map[$(users)])_password_valid_hash";
+      "DEBUG $(this.bundle): Date local '$(users)' last changed password = '$(date_last[$(users)])' epoc = $(parsed_etc_passwd_shadow.epoch_last_password_change[$(users)])"
+        ifvarclass => "$(parsed_etc_passwd_shadow.all_local_users_canonified_map[$(users)])_password_valid_hash";
       "DEBUG $(this.bundle): Not inventorying last password change date for '$(users)' since the user has an invalid password hash"
-        ifvarclass => not("$(inventory_passwd_shadow_discover.all_local_users_canonified_map[$(users)])_password_valid_hash");
+        ifvarclass => not("$(parsed_etc_passwd_shadow.all_local_users_canonified_map[$(users)])_password_valid_hash");
 }
 
 bundle agent inventory_local_users_password_empty
@@ -131,11 +102,11 @@ bundle agent inventory_local_users_password_empty
   vars:
     linux::
       "local_users"
-        slist => { @(inventory_passwd_shadow_discover.all_local_users) };
+        slist => { @(parsed_etc_passwd_shadow.all_local_users) };
 
       "empty[$(local_users)]"
         string => "TRUE",
-        ifvarclass => "$(inventory_passwd_shadow_discover.all_local_users_canonified_map[$(local_users)])_password_empty",
+        ifvarclass => "$(parsed_etc_passwd_shadow.all_local_users_canonified_map[$(local_users)])_password_empty",
         comment => "We need to build an intermediary array of the empty users so
                     that we can report a unified list for inventory";
 
