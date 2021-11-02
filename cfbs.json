@@ -22,7 +22,7 @@
       "version": "2.0.0",
       "dependencies": ["lib-parse-local-users"],
       "steps": [
-        "copy ./policy/parsed_etc_passwd_shadow.cf services/local-users/",
+        "copy ./policy/inventory_passwd_users_all.cf services/local-users/",
         "json cfbs/inventory-local-users.def.json def.json"
       ]
     }
