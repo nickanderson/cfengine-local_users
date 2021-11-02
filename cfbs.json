@@ -3,15 +3,15 @@
   "description": "Modules related to inventorying local users",
   "type": "module",
   "provides": {
-    "lib-parse-local-users": {
-      "name": "lib-parsed-local-users",
+    "library-parse-local-users": {
+      "name": "library-parsed-local-users",
       "description": "Parse local users from /etc/passwd on the system with their attributes from /etc/shadow",
       "tags": ["untested"],
       "repo": "https://github.com/nickanderson/cfengine-local_users",
       "version": "2.0.0",
       "steps": [
         "copy ./policy/parsed_etc_passwd_shadow.cf services/local-users/",
-        "json cfbs/lib-parse-local-users.def.json def.json"
+        "json cfbs/library-parse-local-users.def.json def.json"
       ]
     },
     "inventory-local-users": {
@@ -20,7 +20,7 @@
       "tags": ["untested"],
       "repo": "https://github.com/nickanderson/cfengine-local_users",
       "version": "2.0.0",
-      "dependencies": ["lib-parse-local-users"],
+      "dependencies": ["library-parse-local-users"],
       "steps": [
         "copy ./policy/inventory_passwd_users_all.cf services/local-users/",
         "json cfbs/inventory-local-users.def.json def.json"
@@ -32,7 +32,7 @@
       "tags": ["untested"],
       "repo": "https://github.com/nickanderson/cfengine-local_users",
       "version": "2.0.0",
-      "dependencies": ["lib-parse-local-users"],
+      "dependencies": ["library-parse-local-users"],
       "steps": [
         "copy ./policy/inventory_passwd_users_locked.cf services/local-users/",
         "json cfbs/inventory-local-users-locked.def.json def.json"
@@ -44,7 +44,7 @@
       "tags": ["untested"],
       "repo": "https://github.com/nickanderson/cfengine-local_users",
       "version": "2.0.0",
-      "dependencies": ["lib-parse-local-users"],
+      "dependencies": ["library-parse-local-users"],
       "steps": [
         "copy ./policy/inventory_passwd_users_password_empty.cf services/local-users/",
         "json cfbs/inventory-local-users-password-empty.def.json def.json"
