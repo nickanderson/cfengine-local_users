@@ -25,6 +25,18 @@
         "copy ./policy/inventory_passwd_users_all.cf services/local-users/",
         "json cfbs/inventory-local-users.def.json def.json"
       ]
+    },
+    "inventory-local-users-locked": {
+      "name": "inventory-local-users-locked",
+      "description": "Inventory the local users on the system that are locked",
+      "tags": ["untested"],
+      "repo": "https://github.com/nickanderson/cfengine-local_users",
+      "version": "2.0.0",
+      "dependencies": ["lib-parse-local-users"],
+      "steps": [
+        "copy ./policy/inventory_passwd_users_locked.cf services/local-users/",
+        "json cfbs/inventory-local-users-locked.def.json def.json"
+      ]
     }
   }
 }

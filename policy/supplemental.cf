@@ -4,37 +4,6 @@
 # `parsed_etc_passwd_shadow`. They may or may not be useful, and they
 # may or may not work as several are in various states of flux.
 
-bundle agent inventory_passwd_users_locked
-# @brief Inventory local user accounts that are locked.
-#
-# This bundle inventories local user accounts that appear to be locked
-# as discovered in `parsed_etc_passwd_shadow`. An account is
-# considered locked if the first character of the encrypted password
-# field in $(paths.shadow) is `!`.
-#
-# **See Also:**
-{
-  vars:
-    linux::
-
-      # Create local list of discovered passwd users
-      "users" slist => { @(parsed_etc_passwd_shadow.all_local_users) };
-
-      # Here we define an array entry for each user that has a class defined
-      # identifying it has a locked password and tag it for inventory.
-      "locked[$(users)]"
-        string => "$(users)",
-        ifvarclass => regcmp( "^!.*", "$(parsed_etc_passwd_shadow.encrypted_password[$(users)])"),
-        meta    => {
-                     "inventory",
-                     "attribute_name=Local user account locked"};
-
-  reports:
-    DEBUG|DEBUG_inventory_passwd_users_locked::
-      "DEBUG $(this.bundle): '$(users)' account appears locked"
-        ifvarclass => isvariable("locked[$(users)]");
-}
-
 bundle agent inventory_local_nix_users_password_change(users)
 # @brief Inventory days since last password change for local user
 # accounts
