@@ -45,9 +45,9 @@ bundle agent inventory_local_nix_users_password_change(users)
 # password hashes will not be considered.
 #
 # **See Also:**
-# * `inventory_local_users`
-# * `inventory_local_users_locked`
-# * `inventory_local_users_password_empty`
+# * `inventory_passwd_users_all`
+# * `inventory_passwd_users_all_locked`
+# * `inventory_passwd_users_all_password_empty`
 {
   vars:
     linux::
@@ -88,16 +88,16 @@ bundle agent inventory_local_nix_users_password_change(users)
         ifvarclass => not("$(parsed_etc_passwd_shadow.all_local_users_canonified_map[$(users)])_password_valid_hash");
 }
 
-bundle agent inventory_local_users_password_empty
+bundle agent inventory_passwd_users_all_password_empty
 # @brief Inventory local user accounts that that have empty passwords
 #
 # This bundle inventories local user accounts that have empty passwords
-# discovered in `cfe_autorun_inventory_local_users_discover`.
+# discovered in `cfe_autorun_inventory_passwd_users_all_discover`.
 #
 # **See Also:**
-# * `inventory_local_users_password_last_change`
-# * `inventory_local_users`
-# * `inventory_local_users_locked`
+# * `inventory_passwd_users_all_password_last_change`
+# * `inventory_passwd_users_all`
+# * `inventory_passwd_users_all_locked`
 {
   vars:
     linux::
@@ -122,7 +122,7 @@ bundle agent inventory_local_users_password_empty
         meta    => {
                      "inventory",
                      "attribute_name=Local users with empty passwords",
-                     "derived_from=bundle:cfe_autorun_inventory_local_users_discover" },
+                     "derived_from=bundle:cfe_autorun_inventory_passwd_users_all_discover" },
         comment => "Report on the list of users with empty passwords so that they show up in
                     Mission Portal inventory. Empty passwords may be a security risk";
 

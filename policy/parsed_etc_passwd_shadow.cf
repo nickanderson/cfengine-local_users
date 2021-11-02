@@ -6,10 +6,10 @@ bundle agent parsed_etc_passwd_shadow
 # information is provided by companion bundles.
 #
 # **See Also:**
-# `inventory_local_users_password_last_change`
-# `inventory_local_users`
-# `inventory_local_users_locked`
-# `inventory_local_users_password_empty`
+# `inventory_passwd_users_all_password_last_change`
+# `inventory_passwd_users_all`
+# `inventory_passwd_users_all_locked`
+# `inventory_passwd_users_all_password_empty`
 {
   classes:
       # Only tested on Linux

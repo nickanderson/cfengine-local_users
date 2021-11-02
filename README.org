@@ -12,7 +12,7 @@ Policies that relate to local users
 #+end_example
 
 
-[[file:./media/inventory_local_users.png]]
+[[file:./media/inventory_passwd_users_all.png]]
 
 * parsed_etc_passwd_shadow
 
