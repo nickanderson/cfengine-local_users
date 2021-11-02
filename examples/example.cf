@@ -1,8 +1,8 @@
 bundle common local_users_file_control
 {
   vars:
-    "input[inventory_passwd_shadow_discover]"
-      string => "$(this.promise_dirname)/policy/inventory_passwd_shadow_discover.cf";
+    "input[parsed_etc_passwd_shadow]"
+      string => "$(this.promise_dirname)/policy/parsed_etc_passwd_shadow.cf";
     "input[supplemental]"
       string => "$(this.promise_dirname)/policy/supplemental.cf";
 
@@ -24,7 +24,7 @@ bundle agent main
 {
   methods:
       "Discover local users"
-        usebundle => inventory_passwd_shadow_discover;
+        usebundle => parsed_etc_passwd_shadow;
 
       "inventory all passwd users"
         usebundle => inventory_passwd_users_all;
@@ -40,10 +40,10 @@ bundle agent main
         usebundle => inventory_local_users_password_empty;
 
       "Inventory a list of interesting users if they exist"
-        usebundle => inventory_passwd_users_in_whitelist( @(inventory_passwd_shadow_discover.all_local_users), @(g.users) );
+        usebundle => inventory_passwd_users_in_whitelist( @(parsed_etc_passwd_shadow.all_local_users), @(g.users) );
 
       "Inventory users that arent in a list (unexpected users)"
-        usebundle => inventory_local_nix_users_password_change_blacklist( @(inventory_passwd_shadow_discover.all_local_users), @(g.users) );
+        usebundle => inventory_local_nix_users_password_change_blacklist( @(parsed_etc_passwd_shadow.all_local_users), @(g.users) );
 
       "Inventory users who have not changed password since threshold"
         usebundle => inventory_local_nix_users_password_over_threshold( 1 );
