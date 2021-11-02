@@ -8,9 +8,10 @@
       "description": "Parse local users from /etc/passwd on the system with their attributes from /etc/shadow",
       "repo": "https://github.com/nickanderson/cfengine-local_users",
       "version": "2.0.0",
+      "subdirectory": "inventory_passwd_users_all/",
       "steps": [
-        "copy ./policy/parsed_etc_passwd_shadow/parsed_etc_passwd_shadow.cf services/local-users/parsed_etc_passwd_shadow/",
-        "json cfbs/library-parse-local-users.def.json def.json"
+        "copy ./parsed_etc_passwd_shadow.cf services/local-users/parsed_etc_passwd_shadow/",
+        "json cfbs/def.json def.json"
       ]
     },
     "inventory-local-users": {
@@ -18,10 +19,11 @@
       "description": "Inventory the local users on the system with their attributes",
       "repo": "https://github.com/nickanderson/cfengine-local_users",
       "version": "2.0.0",
+      "subdirectory": "inventory_passwd_users_all/",
       "dependencies": ["library-parse-local-users"],
       "steps": [
-        "copy ./policy/inventory_passwd_users_all/inventory_passwd_users_all.cf services/local-users/inventory_passwd_users_all/",
-        "json cfbs/inventory-local-users.def.json def.json"
+        "copy ./inventory_passwd_users_all.cf services/local-users/inventory_passwd_users_all/",
+        "json cfbs/def.json def.json"
       ]
     },
     "inventory-local-users-locked": {
@@ -29,10 +31,11 @@
       "description": "Inventory the local users on the system that are locked",
       "repo": "https://github.com/nickanderson/cfengine-local_users",
       "version": "2.0.0",
+      "subdirectory": "inventory_passwd_users_locked/",
       "dependencies": ["library-parse-local-users"],
       "steps": [
-        "copy ./policy/inventory_passwd_users_locked/inventory_passwd_users_locked.cf services/local-users/inventory_passwd_users_locked/",
-        "json cfbs/inventory-local-users-locked.def.json def.json"
+        "copy ./inventory_passwd_users_locked.cf services/local-users/inventory_passwd_users_locked/",
+        "json cfbs/def.json def.json"
       ]
     },
     "inventory-local-users-password-empty": {
@@ -40,10 +43,11 @@
       "description": "Inventory the local users on the system that do not have a password set",
       "repo": "https://github.com/nickanderson/cfengine-local_users",
       "version": "2.0.0",
+      "subdirectory": "inventory_passwd_users_password_empty",
       "dependencies": ["library-parse-local-users"],
       "steps": [
-        "copy ./policy/inventory_passwd_users_password_empty/inventory_passwd_users_password_empty.cf services/local-users/inventory_passwd_users_password_empty/",
-        "json cfbs/inventory-local-users-password-empty.def.json def.json"
+        "copy ./inventory_passwd_users_password_empty.cf services/local-users/inventory_passwd_users_password_empty/",
+        "json cfbs/def.json def.json"
       ]
     }
   }
