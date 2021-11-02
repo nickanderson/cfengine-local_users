@@ -1,6 +1,6 @@
 # Supplemental local user inventory bundles. It is currently unclear which
 # bundles would be widely applicable for inventory purposes. These are example
-# emplimentations that leverage the data derived in
+# implementations that leverage the data derived in
 # `parsed_etc_passwd_shadow`. They may or may not be useful, and they
 # may or may not work as several are in various states of flux.
 
