@@ -8,7 +8,7 @@
       "description": "Parse local users from /etc/passwd on the system with their attributes from /etc/shadow",
       "repo": "https://github.com/nickanderson/cfengine-local_users",
       "version": "2.0.0",
-      "subdirectory": "inventory_passwd_users_all/",
+        "subdirectory": "parsed_etc_passwd_shadow/",
       "steps": [
         "copy ./parsed_etc_passwd_shadow.cf services/local-users/parsed_etc_passwd_shadow/",
         "json cfbs/def.json def.json"
