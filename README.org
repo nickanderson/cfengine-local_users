@@ -10,8 +10,8 @@ Policies that relate to local users
 
 * Provides
 
-- [[./policy/parsed_etc_passwd_shadow/README.org][library-parse-local-users]] :: This module defines variables based on parsing of =/etc/passwd=, =/etc/shadow=.
-- [[./policy/inventory_passwd_users_all/README.org][inventory-local-users]] :: Inventories local users
-- [[./policy/inventory_passwd_users_locked/README.org][inventory-local-users-locked]] :: Inventories local users whose accounts are locked
-- [[./policy/inventory_passwd_users_password_empty/README.org][inventory-local-users-password-empty]] :: Inventories local users whose password field is empty
+- [[./parsed_etc_passwd_shadow/][library-parse-local-users]] :: This module defines variables based on parsing of =/etc/passwd=, =/etc/shadow=.
+- [[./inventory_passwd_users_all/][inventory-local-users]] :: Inventories local users
+- [[./inventory_passwd_users_locked/][inventory-local-users-locked]] :: Inventories local users whose accounts are locked
+- [[./inventory_passwd_users_password_empty/][inventory-local-users-password-empty]] :: Inventories local users whose password field is empty
 
