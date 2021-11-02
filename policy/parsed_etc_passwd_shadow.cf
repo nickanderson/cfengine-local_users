@@ -11,9 +11,6 @@ bundle agent parsed_etc_passwd_shadow
 # `inventory_local_users_locked`
 # `inventory_local_users_password_empty`
 {
-  meta:
-    "tags" slist => { "autorun" };
-
   classes:
       # Only tested on Linux
       "_$(this.bundle)_supported_platform" expression => "linux";
