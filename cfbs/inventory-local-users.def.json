@@ -4,6 +4,6 @@
     },
 
     "inputs": [ "services/inventory-local-users/parsed_etc_passwd_shadow.cf",
-                "services/inventory-local-users/supplemental.cf"
+                "services/inventory-local-users/inventory_passwd_users_all.cf"
               ]
 }
