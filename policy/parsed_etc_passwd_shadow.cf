@@ -22,84 +22,107 @@ bundle agent parsed_etc_passwd_shadow
       # fixes to def.json support.
       "passwd_file"
         string => "$(def.passwd_file)",
-        ifvarclass => isvariable("def.passwd_file");
+        ifvarclass => isvariable("def.passwd_file"),
+        meta => { "noreport" };
 
       # Ideally we can replace this two promise implementation with a
       # single promise using ifelse function when the ifelse function
       # can use the result of isvariable as a class input.
       "passwd_file"
         string => "/etc/passwd",
-        ifvarclass => not( isvariable("def.passwd_file") );
+        ifvarclass => not( isvariable("def.passwd_file") ),
+        meta => { "noreport" };
 
       "shadow_file"
         string => "$(def.shadow_file)",
-        ifvarclass => isvariable("def.shadow_file");
+        ifvarclass => isvariable("def.shadow_file"),
+        meta => { "noreport" };
 
       "shadow_file"
         string => "/etc/shadow",
-        ifvarclass => not( isvariable("def.shadow_file") );
+        ifvarclass => not( isvariable("def.shadow_file") ),
+        meta => { "noreport" };
 
       # 500 local users and 1MB of data for passwd or shadow seems like a reasonable limit.
       "shadow_data"
-        data => data_readstringarray( $(shadow_file), "", ":", 500, 1M );
+        data => data_readstringarray( $(shadow_file), "", ":", 500, 1M ),
+        meta => { "noreport" };
+
       "passwd_data"
-        data => data_readstringarray( $(passwd_file), "", ":", 500, 1M );
+        data => data_readstringarray( $(passwd_file), "", ":", 500, 1M ),
+        meta => { "noreport" };
 
       "all_local_users"
-        slist => getindices("passwd_data");
+        slist => getindices("passwd_data"),
+        meta => { "noreport" };
 
     "_$(this.bundle)_supported_platform.(DEBUG|DEBUG_parsed_etc_passwd_shadow)"::
 
       "all_local_users_str"
         string => join(", ", all_local_users),
-        comment => "Having a combined string of users is useful for debug reports";
+        comment => "Having a combined string of users is useful for debug reports",
+        meta => { "noreport" };
 
     "_$(this.bundle)_supported_platform"::
 
       "all_local_users_canonified_map[$(all_local_users)]"
-        string => canonify($(all_local_users));
+        string => canonify($(all_local_users)),
+        meta => { "noreport" };
 
       "all_local_users_canonified_list"
         slist => maplist("$(local_users_canonified_list[$(this)])", "local_users"),
         comment => "A canonified list is useful when dealing with variables
                     because user names may contain characters that are invalid
-                    in variable names";
+                    in variable names",
+        meta => { "noreport" };
 
       "epoch_last_password_change[$(all_local_users)]"
-        string => "$(shadow_data[$(all_local_users)][1])";
+        string => "$(shadow_data[$(all_local_users)][1])",
+        meta => { "noreport" };
 
       "min_password_age[$(all_local_users)]"
-        string => "$(shadow_data[$(all_local_users)][2])";
+        string => "$(shadow_data[$(all_local_users)][2])",
+        meta => { "noreport" };
 
       "max_password_age[$(all_local_users)]"
-        string => "$(shadow_data[$(all_local_users)][3])";
+        string => "$(shadow_data[$(all_local_users)][3])",
+        meta => { "noreport" };
 
       "password_warning_period[$(all_local_users)]"
-        string => "$(shadow_data[$(all_local_users)][4])";
+        string => "$(shadow_data[$(all_local_users)][4])",
+        meta => { "noreport" };
 
       "password_inactivity_period[$(all_local_users)]"
-        string => "$(shadow_data[$(all_local_users)][5])";
+        string => "$(shadow_data[$(all_local_users)][5])",
+        meta => { "noreport" };
 
       "account_expiration_date[$(all_local_users)]"
-        string => "$(shadow_data[$(all_local_users)][6])";
+        string => "$(shadow_data[$(all_local_users)][6])",
+        meta => { "noreport" };
 
       "numeric_user_id[$(all_local_users)]"
-        string => "$(passwd_data[$(all_local_users)][1])";
+        string => "$(passwd_data[$(all_local_users)][1])",
+        meta => { "noreport" };
 
       "numeric_group_id[$(all_local_users)]"
-        string => "$(passwd_data[$(all_local_users)][2])";
+        string => "$(passwd_data[$(all_local_users)][2])",
+        meta => { "noreport" };
 
       "comment[$(all_local_users)]"
-        string => "$(passwd_data[$(all_local_users)][3])";
+        string => "$(passwd_data[$(all_local_users)][3])",
+        meta => { "noreport" };
 
       "home_directory[$(all_local_users)]"
-        string => "$(passwd_data[$(all_local_users)][4])";
+        string => "$(passwd_data[$(all_local_users)][4])",
+        meta => { "noreport" };
 
       "shell[$(all_local_users)]"
-        string => "$(passwd_data[$(all_local_users)][5])";
+        string => "$(passwd_data[$(all_local_users)][5])",
+        meta => { "noreport" };
 
       "encrypted_password[$(all_local_users)]"
-        string => "$(shadow_data[$(all_local_users)][0])";
+        string => "$(shadow_data[$(all_local_users)][0])",
+        meta => { "noreport" };
 
   classes:
     "_$(this.bundle)_supported_platform"::

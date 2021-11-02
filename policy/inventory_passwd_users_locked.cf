@@ -12,7 +12,8 @@ bundle agent inventory_passwd_users_locked
     linux::
 
       # Create local list of discovered passwd users
-      "users" slist => { @(parsed_etc_passwd_shadow.all_local_users) };
+      "users" slist => { @(parsed_etc_passwd_shadow.all_local_users) },
+        meta => { "noreport" };
 
       # Here we define an array entry for each user that has a class defined
       # identifying it has a locked password and tag it for inventory.

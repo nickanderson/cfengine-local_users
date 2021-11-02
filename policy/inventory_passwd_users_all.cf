@@ -19,7 +19,8 @@ bundle agent inventory_passwd_users_all
 
     DEBUG|DEBUG_inventory_passwd_users_all::
       "count_users"
-        int => length( "parsed_etc_passwd_shadow.all_local_users" );
+        int => length( "parsed_etc_passwd_shadow.all_local_users" ),
+        meta => { "noreport" };
 
   reports:
     DEBUG|DEBUG_inventory_passwd_users_all::

@@ -1,0 +1,31 @@
+#+Title: Installation
+
+The easiest way to integrate this policy into your policy set is to use ~cfbs~.
+
+* From the cfbs index
+
+#+begin_example
+  ❯ cfbs search local-users
+  inventory-local-users - Inventory the local users on the system with their attributes
+  ❯ cfbs add inventory-local-users
+  Added module: inventory-local-users
+#+end_example
+
+* From this repository
+
+#+begin_example
+  ❯ cfbs add https://github.com/nickanderson/cfengine-local_users
+  Found 4 modules in 'https://github.com/nickanderson/cfengine-local_users':
+    - lib-parse-local-users
+    - inventory-local-users
+    - inventory-local-users-locked
+    - inventory-local-users-password-empty
+  Do you want to add all 4 of them? [y/N] y
+  Added module: lib-parse-local-users
+  Skipping already added module 'lib-parse-local-users'
+  Added module: inventory-local-users
+  Skipping already added module 'lib-parse-local-users'
+  Added module: inventory-local-users-locked
+  Skipping already added module 'lib-parse-local-users'
+  Added module: inventory-local-users-password-empty
+#+end_example
