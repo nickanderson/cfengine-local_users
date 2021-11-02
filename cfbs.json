@@ -47,7 +47,7 @@
       "dependencies": ["lib-parse-local-users"],
       "steps": [
         "copy ./policy/inventory_passwd_users_password_empty.cf services/local-users/",
-        "json cfbs/inventory-local-password-empty.def.json def.json"
+        "json cfbs/inventory-local-users-password-empty.def.json def.json"
       ]
     }
   }
