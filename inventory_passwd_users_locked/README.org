@@ -10,7 +10,6 @@
 
 - /Local user account locked/ :: List of local users whose accounts are /locked/
 
-                     "attribute_name=Local users with empty passwords",
 * Requirements
 
 - CFEngine version 3.7.0 or greater
