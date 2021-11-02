@@ -1,16 +1,28 @@
 {
-  "name": "Inventory local users cfbs module",
-  "description": "Inventory the local users on the system with their attributes",
+  "name": "Local Users",
+  "description": "Modules related to inventorying local users",
   "type": "module",
   "provides": {
+    "lib-parse-local-users": {
+      "name": "lib-parsed-local-users",
+      "description": "Parse local users from /etc/passwd on the system with their attributes from /etc/shadow",
+      "tags": ["untested"],
+      "repo": "https://github.com/nickanderson/cfengine-local_users",
+      "version": "2.0.0",
+      "steps": [
+        "copy ./policy/parsed_etc_passwd_shadow.cf services/local-users/",
+        "json cfbs/lib-parse-local-users.def.json def.json"
+      ]
+    },
     "inventory-local-users": {
       "name": "inventory-local-users",
       "description": "Inventory the local users on the system with their attributes",
       "tags": ["untested"],
       "repo": "https://github.com/nickanderson/cfengine-local_users",
       "version": "2.0.0",
+      "dependencies": ["lib-parse-local-users"],
       "steps": [
-        "copy ./policy/parsed_etc_passwd_shadow.cf services/inventory-local-users/",
+        "copy ./policy/parsed_etc_passwd_shadow.cf services/local-users/",
         "json cfbs/inventory-local-users.def.json def.json"
       ]
     }

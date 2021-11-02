@@ -1,9 +1,6 @@
 {
-    "vars":{
-        "control_common_bundlesequence_classification": [ "parsed_etc_passwd_shadow", "inventory_passwd_users_all" ]
-    },
-
-    "inputs": [ "services/inventory-local-users/parsed_etc_passwd_shadow.cf",
-                "services/inventory-local-users/inventory_passwd_users_all.cf"
-              ]
+  "vars": {
+    "control_common_bundlesequence_classification": ["inventory_local_users"]
+  },
+  "inputs": ["services/local-users/inventory_local_users.cf"]
 }
