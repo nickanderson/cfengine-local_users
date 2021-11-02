@@ -1,0 +1,16 @@
+#+TITLE:inventory-local-users 
+
+* Synopsis
+
+- *Name*: =inventory-local-users=
+- *Version*: =2.0.0=
+- *Description*: Inventories local users based on variables defined by =library-parse-local-users=
+
+* Inventory
+
+- /Local users/ :: List of local users as determined by =library-parse-local-users=
+
+* Requirements
+
+- CFEngine version 3.7.0 or greater
+

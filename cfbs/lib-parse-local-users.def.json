@@ -2,5 +2,5 @@
   "vars": {
     "control_common_bundlesequence_classification": ["parsed_etc_passwd_shadow"]
   },
-  "inputs": ["services/local-users/parsed_etc_passwd_shadow.cf"]
+    "inputs": ["services/local-users/parsed_etc_passwd_shadow/parsed_etc_passwd_shadow.cf"]
 }

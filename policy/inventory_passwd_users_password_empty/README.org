@@ -1,0 +1,16 @@
+#+TITLE:inventory-local-users-password-empty
+
+* Synopsis
+
+- *Name*: =inventory-local-users-password-empty=
+- *Version*: =2.0.0=
+- *Description*: Inventories local users whose password field is empty
+
+* Inventory
+
+- /Local users with empty passwords/ :: List of local users whose password filed is empty
+
+* Requirements
+
+- CFEngine version 3.7.0 or greater
+
