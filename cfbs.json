@@ -7,7 +7,7 @@
       "name": "library-parsed-local-users",
       "description": "Parse local users from /etc/passwd on the system with their attributes from /etc/shadow",
       "repo": "https://github.com/nickanderson/cfengine-local_users",
-      "version": "2.0.0",
+      "version": "2.0.1",
         "subdirectory": "parsed_etc_passwd_shadow/",
       "steps": [
         "copy ./parsed_etc_passwd_shadow.cf services/local-users/parsed_etc_passwd_shadow/",
@@ -18,7 +18,7 @@
       "name": "inventory-local-users",
       "description": "Inventory the local users on the system with their attributes",
       "repo": "https://github.com/nickanderson/cfengine-local_users",
-      "version": "2.0.0",
+      "version": "2.0.1",
       "subdirectory": "inventory_passwd_users_all/",
       "dependencies": ["library-parse-local-users"],
       "steps": [
@@ -30,7 +30,7 @@
       "name": "inventory-local-users-locked",
       "description": "Inventory the local users on the system that are locked",
       "repo": "https://github.com/nickanderson/cfengine-local_users",
-      "version": "2.0.0",
+      "version": "2.0.1",
       "subdirectory": "inventory_passwd_users_locked/",
       "dependencies": ["library-parse-local-users"],
       "steps": [
@@ -42,7 +42,7 @@
       "name": "inventory-local-users-password-empty",
       "description": "Inventory the local users on the system that do not have a password set",
       "repo": "https://github.com/nickanderson/cfengine-local_users",
-      "version": "2.0.0",
+      "version": "2.0.1",
       "subdirectory": "inventory_passwd_users_password_empty",
       "dependencies": ["library-parse-local-users"],
       "steps": [

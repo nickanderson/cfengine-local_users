@@ -1,11 +1,8 @@
 #+TITLE: CFEngine Local Users
 
-Policies that relate to local users
-
 * Synopsis
 
 - *Name*: =local-users=
-- *Version*: =2.0.0=
 - *Description*: Inventory local users from =/etc/passwd= and their attributes from =/etc/shadow=.
 
 * Provides
