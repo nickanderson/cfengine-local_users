@@ -24,6 +24,15 @@ bundle agent inventory_passwd_users_locked
                      "inventory",
                      "attribute_name=Local user account locked"};
 
+      "_locked_users" slist => getindices( "locked" );
+      "_unlocked_users" slist => difference( "users", "_locked_users" );
+
+      "notlocked[$(_unlocked_users)]"
+        string => "$(_unlocked_users)",
+        meta    => {
+                     "inventory",
+                     "attribute_name=Local user account unlocked"};
+
   reports:
     DEBUG|DEBUG_inventory_passwd_users_locked::
       "DEBUG $(this.bundle): '$(users)' account appears locked"
