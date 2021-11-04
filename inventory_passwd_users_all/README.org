@@ -3,7 +3,7 @@
 * Synopsis
 
 - *Name*: =inventory-local-users=
-- *Version*: =2.0.1=
+- *Version*: =2.0.2=
 - *Description*: Inventories local users based on variables defined by =library-parse-local-users=
 
 * Inventory
