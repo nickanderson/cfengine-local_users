@@ -2,10 +2,8 @@ bundle agent inventory_local_user_pw_hashing_algo
 # @brief Inventory password hashing algorithms in use by local users
 # @inventory Local user password hashing algorithms in use
 # @inventory Local user <USERNAME> password hashing algorithm
+# @inventory Local users using <ALGORITHM> password hashing
 {
-  meta:
-    "tags" slist => { "autorun" };
-
   vars:
       "_hashing_algo[$(default:parsed_etc_passwd_shadow.all_local_users)]"
         string => ifelse(
@@ -24,6 +22,14 @@ bundle agent inventory_local_user_pw_hashing_algo
       "hashing_algorithms_in_use"
         slist => sort( unique( getvalues( "_hashing_algo" ) ), "lex" ),
         meta => { "inventory", "attribute_name=Local user password hashing algorithms in use" };
+
+      "_hash_in_use_by[$(hashing_algorithms_in_use)][$(default:parsed_etc_passwd_shadow.all_local_users)]"
+        string => "$(_hashing_algo[$(default:parsed_etc_passwd_shadow.all_local_users)])",
+        if => strcmp( "$(hashing_algorithms_in_use)", "$(_hashing_algo[$(default:parsed_etc_passwd_shadow.all_local_users)])" );
+
+      "hash_users[$(hashing_algorithms_in_use)]"
+        slist => getindices(  "_hash_in_use_by[$(hashing_algorithms_in_use)]" ),
+        meta => { "inventory", "attribute_name=Local users using $(hashing_algorithms_in_use) password hashing" };
 
     inventory_local_user_pw_hashing_algo_individuals::
       "hashing_algo[$(default:parsed_etc_passwd_shadow.all_local_users)]"

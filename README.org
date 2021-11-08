@@ -6,6 +6,9 @@
 - *Description*: Inventory local users from =/etc/passwd= and their attributes from =/etc/shadow=.
 
 * Provides
+:PROPERTIES:
+:ID:       fa127bf9-adc7-43ab-b11f-ab243c2f6a6a
+:END:
 
 - [[./parsed_etc_passwd_shadow/][library-parse-local-users]] :: This module defines variables based on parsing of =/etc/passwd=, =/etc/shadow=.
 - [[./inventory_passwd_users_all/][inventory-local-users]] :: Inventories local users

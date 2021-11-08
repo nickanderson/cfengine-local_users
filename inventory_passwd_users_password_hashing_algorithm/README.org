@@ -8,7 +8,8 @@
 
 * Inventory
 
-- /Local user password hashing algorithms/ :: List of password hashing algorithms in use by local users
+- /Local user password hashing algorithms/ :: List of password hashing algorithms in use by local users.
+- /Local users using <ALGORITHM> password hashing/ :: For each type of hashing algorithm used, the users who's passwords are hashed using <ALGORITHM>.
 - /Local user <USERNAME> password hashing algorithm/ :: For each /valid/ entry, the specific hashing algorithm used by <USERNAME>. Only reported when =default:inventory_local_user_pw_hashing_algo_individuals= is defined.
 
 * Requirements
