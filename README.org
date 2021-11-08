@@ -11,5 +11,5 @@
 - [[./inventory_passwd_users_all/][inventory-local-users]] :: Inventories local users
 - [[./inventory_passwd_users_locked/][inventory-local-users-locked]] :: Inventories local users whose accounts are locked
 - [[./inventory_passwd_users_password_empty/][inventory-local-users-password-empty]] :: Inventories local users whose password field is empty
-_ [[./inventory_passwd_users_password_hashing_algorithm/][inventory-local-users-password-hashing-algorithm]] :: Inventories the password hashing algorithms in use by local users
+- [[./inventory_passwd_users_password_hashing_algorithm/][inventory-local-users-password-hashing-algorithm]] :: Inventories the password hashing algorithms in use by local users
 
