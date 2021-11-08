@@ -3,7 +3,7 @@
 * Synopsis
 
 - *Name*: =library-parse-local-users=
-- *Version*: =2.0.2=
+- *Version*: =2.0.3=
 - *Description*: Inventories local users from =/etc/passwd= and their attributes from =/etc/shadow=
 
 * Requirements

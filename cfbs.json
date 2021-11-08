@@ -7,7 +7,7 @@
       "name": "library-parsed-local-users",
       "description": "Parse local users from /etc/passwd on the system with their attributes from /etc/shadow",
       "repo": "https://github.com/nickanderson/cfengine-local_users",
-      "version": "2.0.2",
+      "version": "2.0.3",
       "subdirectory": "parsed_etc_passwd_shadow/",
       "steps": [
         "copy ./parsed_etc_passwd_shadow.cf services/local-users/parsed_etc_passwd_shadow/",
@@ -18,7 +18,7 @@
       "name": "inventory-local-users",
       "description": "Inventory the local users on the system with their attributes",
       "repo": "https://github.com/nickanderson/cfengine-local_users",
-      "version": "2.0.2",
+      "version": "2.0.3",
       "subdirectory": "inventory_passwd_users_all/",
       "dependencies": ["library-parsed-local-users"],
       "steps": [
@@ -30,7 +30,7 @@
       "name": "inventory-local-users-locked",
       "description": "Inventory the local users on the system that are locked",
       "repo": "https://github.com/nickanderson/cfengine-local_users",
-      "version": "2.0.2",
+      "version": "2.0.3",
       "subdirectory": "inventory_passwd_users_locked/",
       "dependencies": ["library-parsed-local-users"],
       "steps": [
@@ -42,13 +42,25 @@
       "name": "inventory-local-users-password-empty",
       "description": "Inventory the local users on the system that do not have a password set",
       "repo": "https://github.com/nickanderson/cfengine-local_users",
-      "version": "2.0.2",
+      "version": "2.0.3",
       "subdirectory": "inventory_passwd_users_password_empty",
       "dependencies": ["library-parsed-local-users"],
       "steps": [
         "copy ./inventory_passwd_users_password_empty.cf services/local-users/inventory_passwd_users_password_empty/",
         "json cfbs/def.json def.json"
       ]
-    }
+    },
+      "inventory-local-users-password-hashing-algorithm": {
+          "name": "inventory-local-users-password-hashing-algorithm",
+          "description": "Inventory password hashing algorithms in use by local users",
+          "repo": "https://github.com/nickanderson/cfengine-local_users",
+          "version": "2.0.3",
+          "subdirectory": "inventory_passwd_users_password_hashing_algorithm",
+          "dependencies": ["library-parsed-local-users"],
+          "steps": [
+              "copy ./inventory_local_user_pw_hashing_algorithm.cf services/local-users/inventory_passwd_users_password_hashing_algorithm/",
+              "json cfbs/def.json def.json"
+          ]
+      }
   }
 }

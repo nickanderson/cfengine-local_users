@@ -1,0 +1,6 @@
+{
+    "vars": {
+        "control_common_bundlesequence_classification": ["inventory_local_user_pw_hashing_algo"]
+    },
+    "inputs": ["services/local-users/inventory_passwd_users_password_hashing_algorithm/inventory_local_user_pw_hashing_algorithm.cf"]
+}

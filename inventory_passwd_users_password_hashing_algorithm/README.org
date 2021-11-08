@@ -1,0 +1,16 @@
+#+TITLE: inventory-local-users-password-hashing-algorithm
+
+* Synopsis
+
+- *Name*: =inventory-local-users-password-hashing-algorithm=
+- *Version*: =2.0.3=
+- *Description*: Inventories local users password hashing algorithms in use based on variables defined by =library-parse-local-users=
+
+* Inventory
+
+- /Local user password hashing algorithms/ :: List of password hashing algorithms in use by local users
+- /Local user <USERNAME> password hashing algorithm/ :: For each /valid/ entry, the specific hashing algorithm used by <USERNAME>. Only reported when =default:inventory_local_user_pw_hashing_algo_individuals= is defined.
+
+* Requirements
+
+- CFEngine version 3.7.0 or greater

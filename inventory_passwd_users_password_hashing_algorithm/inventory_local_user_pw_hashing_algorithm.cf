@@ -1,0 +1,32 @@
+bundle agent inventory_local_user_pw_hashing_algo
+# @brief Inventory password hashing algorithms in use by local users
+# @inventory Local user password hashing algorithms in use
+# @inventory Local user <USERNAME> password hashing algorithm
+{
+  meta:
+    "tags" slist => { "autorun" };
+
+  vars:
+      "_hashing_algo[$(default:parsed_etc_passwd_shadow.all_local_users)]"
+        string => ifelse(
+                          regcmp( "\$1\$.*", "$(parsed_etc_passwd_shadow.shadow_data[$(default:parsed_etc_passwd_shadow.all_local_users)][0])" ), "MD5",
+                          regcmp( "\$2a\$.*", "$(parsed_etc_passwd_shadow.shadow_data[$(default:parsed_etc_passwd_shadow.all_local_users)][0])" ), "Blowfish",
+                          regcmp( "\$5\$.*", "$(parsed_etc_passwd_shadow.shadow_data[$(default:parsed_etc_passwd_shadow.all_local_users)][0])" ), "SHA256",
+                          regcmp( "\$6\$.*", "$(parsed_etc_passwd_shadow.shadow_data[$(default:parsed_etc_passwd_shadow.all_local_users)][0])" ), "SHA512",
+                          regcmp( "\$y\$.*", "$(parsed_etc_passwd_shadow.shadow_data[$(default:parsed_etc_passwd_shadow.all_local_users)][0])" ), "yescrypt",
+                          regcmp( "\$gy\$.*", "$(parsed_etc_passwd_shadow.shadow_data[$(default:parsed_etc_passwd_shadow.all_local_users)][0])" ), "ghost-yescrypt",
+                          regcmp( "\$7\$.*", "$(parsed_etc_passwd_shadow.shadow_data[$(default:parsed_etc_passwd_shadow.all_local_users)][0])" ), "scrypt",
+                          regcmp( "\$sha1\$.*", "$(parsed_etc_passwd_shadow.shadow_data[$(default:parsed_etc_passwd_shadow.all_local_users)][0])" ), "SHA1",
+                          "UNKNOWN" ),
+                       # Unless the entry is invalid (e.g. locked/disabled)
+        unless => regcmp( "[!*].*", "$(parsed_etc_passwd_shadow.shadow_data[$(default:parsed_etc_passwd_shadow.all_local_users)][0])" );
+
+      "hashing_algorithms_in_use"
+        slist => sort( unique( getvalues( "_hashing_algo" ) ), "lex" ),
+        meta => { "inventory", "attribute_name=Local user password hashing algorithms in use" };
+
+    inventory_local_user_pw_hashing_algo_individuals::
+      "hashing_algo[$(default:parsed_etc_passwd_shadow.all_local_users)]"
+        string => "$(_hashing_algo[$(default:parsed_etc_passwd_shadow.all_local_users)])",
+        meta => { "inventory", "attribute_name=Local user $(default:parsed_etc_passwd_shadow.all_local_users) password hashing algorithm" };
+}

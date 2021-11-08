@@ -3,7 +3,7 @@
 * Synopsis
 
 - *Name*: =inventory-local-users-locked=
-- *Version*: =2.0.2=
+- *Version*: =2.0.3=
 - *Description*: Inventories local users whose password field in =/etc/shadow= is locked based on variables defined by =library-parse-local-users=
 
 * Inventory
