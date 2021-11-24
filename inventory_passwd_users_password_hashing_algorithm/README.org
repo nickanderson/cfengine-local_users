@@ -3,7 +3,7 @@
 * Synopsis
 
 - *Name*: =inventory-local-users-password-hashing-algorithm=
-- *Version*: =2.0.3=
+- *Version*: =2.0.4=
 - *Description*: Inventories local users password hashing algorithms in use based on variables defined by =library-parse-local-users=
 
 * Inventory

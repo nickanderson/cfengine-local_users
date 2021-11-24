@@ -1,0 +1,28 @@
+bundle agent inventory_non_root_users_with_uid_zero
+#@ inventory Non Root users with UID 0
+#@ class non_root_local_user_using_uid_zero
+#@ class NO_non_root_local_user_using_uid_zero
+{
+
+ classes:
+    "non_root_local_user_using_uid_zero"
+      expression => strcmp( "0", "$(default:parsed_etc_passwd_shadow.numeric_user_id[$(default:parsed_etc_passwd_shadow.all_local_users)])"),
+      if => not( strcmp( "root", "$(default:parsed_etc_passwd_shadow.all_local_users)" ) ),
+      scope => "namespace",
+      meta =>  { "report" };
+
+    "NO_non_root_local_user_using_uid_zero"
+      not => "non_root_local_user_using_uid_zero",
+      scope => "namespace",
+      meta =>  { "report" };
+
+  vars:
+
+    non_root_local_user_using_uid_zero::
+      "non_root_uid_zero[$(default:parsed_etc_passwd_shadow.all_local_users)]"
+        string => "$(default:parsed_etc_passwd_shadow.all_local_users)",
+        meta => { "inventory", "attribute_name=Non Root users with UID 0" },
+        if => and( not( strcmp( "root", "$(default:parsed_etc_passwd_shadow.all_local_users)" ) ),
+                   strcmp( "0", "$(default:parsed_etc_passwd_shadow.numeric_user_id[$(default:parsed_etc_passwd_shadow.all_local_users)])"));
+
+}

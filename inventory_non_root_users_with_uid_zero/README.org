@@ -1,0 +1,15 @@
+#+TITLE: inventory-local-users-non-root-has-uid-0
+
+* Synopsis
+
+- *Name*: =inventory-local-users-non-root-has-uid-0=
+- *Version*: =2.0.4=
+- *Description*: Inventories local non-root users that have uid 0 based on variables defined by =library-parse-local-users=
+
+* Inventory
+
+- /Non Root users with UID 0/ :: List of local non-root users as determined by =library-parse-local-users= that have uid 0
+
+* Requirements
+
+- CFEngine version 3.7.0 or greater

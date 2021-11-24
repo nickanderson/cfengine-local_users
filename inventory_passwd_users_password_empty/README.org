@@ -3,7 +3,7 @@
 * Synopsis
 
 - *Name*: =inventory-local-users-password-empty=
-- *Version*: =2.0.3=
+- *Version*: =2.0.4=
 - *Description*: Inventories local users whose password field is empty
 
 * Inventory
