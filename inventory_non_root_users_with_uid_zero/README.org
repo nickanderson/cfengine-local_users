@@ -1,15 +1,9 @@
-#+TITLE: inventory-local-users-non-root-has-uid-0
+Do you have any non-root users with uid 0? Traditionally the =root= user gets uid 0, but having other users with uid 0 can increase the attack surface area and it's generally considered bad practice.
 
-* Synopsis
-
-- *Name*: =inventory-local-users-non-root-has-uid-0=
-- *Version*: =2.0.4=
-- *Description*: Inventories local non-root users that have uid 0 based on variables defined by =library-parse-local-users=
+This module inventories non-root users whose uid is 0. Use this module as part of building your own compliance reports.
 
 * Inventory
 
 - /Non Root users with UID 0/ :: List of local non-root users as determined by =library-parse-local-users= that have uid 0
 
-* Requirements
-
-- CFEngine version 3.7.0 or greater
+[[https://raw.github.com/nickanderson/cfengine-local_users/master/inventory_non_root_users_with_uid_zero/host-info-page-inventory-attribute-Non_Root_users_with_UID_0.png]]
