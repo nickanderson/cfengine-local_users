@@ -42,7 +42,7 @@
       "description": "Inventory the non-root users that have uid 0",
       "tags": ["inventory", "security"],
       "repo": "https://github.com/nickanderson/cfengine-local_users",
-      "version": "2.0.4",
+      "version": "2.0.5",
       "subdirectory": "inventory_non_root_users_with_uid_zero/",
       "dependencies": ["library-parsed-local-users"],
       "steps": [
