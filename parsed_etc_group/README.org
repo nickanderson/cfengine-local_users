@@ -1,0 +1,18 @@
+#+title: library-parse-local-groups
+
+* Synopsis
+
+- *Name*: =library-parse-local-groups=
+- *Version*: =0.0.1=
+- *Description*: Inventories local groups from =/etc/group=.
+
+* Variables
+
+- =nickanderson_parsed:_etc_group.groups= :: List of local group names parsed from =/etc/group=.
+- =nickanderson_parsed:_etc_group.local_group[<groupname>][gid]= :: The group id for the local group =<groupname>=.
+- =nickanderson_parsed:_etc_group.local_group[<groupname>][users]= :: List of usernames who are part of the local group =<groupname>=.
+
+* Requirements
+
+- CFEngine version 3.7.0 or greater
+

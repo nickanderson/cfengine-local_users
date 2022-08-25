@@ -1,0 +1,6 @@
+{
+    "vars": {
+        "control_common_bundlesequence_classification": ["nickanderson_inventory:_etc_groups"]
+    },
+    "inputs": ["services/local-groups/inventory-local-groups/inventory-local-groups.cf"]
+}

@@ -1,0 +1,15 @@
+#+title: inventory-local-groups
+
+* Synopsis
+
+- *Name*: =inventory-local-groups=
+- *Version*: =0.0.1=
+- *Description*: Inventories local groups based on variables defined by =library-parsed-local-groups=
+
+* Inventory
+
+- /Local groups/ :: List of local groups as determined by =library-parsed-local-groups=
+
+* Requirements
+
+- CFEngine version 3.7.0 or greater

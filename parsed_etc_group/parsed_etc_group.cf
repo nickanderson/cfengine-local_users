@@ -1,0 +1,63 @@
+body file control
+{
+  namespace => "nickanderson_parsed";
+}
+
+bundle agent _etc_group
+# @brief Discover local group information
+# This bundle does local group discovery by parsing /etc/group
+# The variables populated by this discovery are **not**
+# automatically reported back to Mission Portal. Inventory of this
+# information is provided by companion bundles.
+#
+# **Variables:**
+#
+# * `nickanderson_parsed:_etc_group.groups` :: List of local group names parsed from `/etc/group`.
+# * `nickanderson_parsed:_etc_group.local_group[<groupname>][gid]` :: The group id for the local group `<groupname>`.
+# * `nickanderson_parsed:_etc_group.local_group[<groupname>][users]` :: List of usernames who are part of the local group `<groupname>`.
+{
+
+  classes:
+      "have_group_file"
+        expression => fileexists( $(group_file) );
+
+  vars:
+
+      "group_file"
+        string => "/etc/group",
+        meta => { "noreport" };
+
+    have_group_file::
+
+      "group_data"
+        data => data_readstringarray( $(group_file), "", ":", inf, inf ),
+        meta => { "noreport" };
+
+      "groups"
+        slist => getindices( group_data ),
+        meta => { "noreport" },
+        comment => "List of group names parsed from /etc/group";
+
+      "local_group[$(groups)][gid]"
+        string => "$(group_data[$(groups)][1])",
+        meta => { "noreport" };
+
+      # Note: this is ordered the same as the file. For inventory, probably it's
+      # desirable to sort this list lexically.
+      "local_group[$(groups)][users]"
+        slist => string_split( "$(group_data[$(groups)][2])",
+                               ",",
+                               inf ),
+        meta => { "noreport" };
+
+      # Group passwords are an inherent security problem since more than one
+      # person is permitted to know the password. It's a-typical to use this
+      # feature, so it's not currently parsed.
+      #
+      # "local_group[$(groups)][password]"
+      #   string => "$(group_data[$(groups)][0])",
+      #   meta => { "noreport" },
+      #   comment => "the (encrypted) group password. If this field is empty, no
+      #               password is needed. If this value is an x, it means the
+      #               encrypted password is stored in /etc/gshadow";
+}

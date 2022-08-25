@@ -14,6 +14,29 @@
         "json cfbs/def.json def.json"
       ]
     },
+    "library-parsed-local-groups": {
+      "name": "library-parsed-local-groups",
+      "description": "Parse local group from /etc/group on the system.",
+      "repo": "https://github.com/nickanderson/cfengine-local_users",
+      "version": "0.0.1",
+      "subdirectory": "parsed_etc_group/",
+      "steps": [
+        "copy ./parsed_etc_group.cf services/local-groups/parsed_etc_group/",
+        "json cfbs/def.json def.json"
+      ]
+    },
+    "inventory-local-groups": {
+      "name": "inventory-local-groups",
+      "description": "Inventory the local groups on the system.",
+      "repo": "https://github.com/nickanderson/cfengine-local_groups",
+      "version": "0.0.1",
+      "subdirectory": "inventory-local-groups/",
+      "dependencies": ["library-parsed-local-groups"],
+      "steps": [
+        "copy ./inventory-local-groups.cf services/local-groups/inventory-local-groups/",
+        "json cfbs/def.json def.json"
+      ]
+    },
     "inventory-local-users": {
       "name": "inventory-local-users",
       "description": "Inventory the local users on the system with their attributes",

@@ -1,0 +1,6 @@
+{
+    "vars": {
+        "control_common_bundlesequence_classification": ["nickanderson_parsed:_etc_group"]
+    },
+    "inputs": ["services/local-groups/parsed_etc_group/parsed_etc_group.cf"]
+}

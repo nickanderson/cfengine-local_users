@@ -1,0 +1,23 @@
+body file control
+{
+      namespace => "nickanderson_inventory";
+}
+
+bundle agent _etc_groups
+# @brief Inventory all local groups
+# This bundle inventories local groups as parsed by nickakderson_parsed:_etc_group
+#
+# **Inventory:**
+#
+# * `Local Groups` :: Local group names as parsed from /etc/group
+{
+  vars:
+
+      # Inventoried as individual strings to avoid potential truncated list as
+      # result of Enterprise Reporting variable size limits.
+
+      "inventory[$(nickanderson_parsed:_etc_group.groups)]"
+        string => "$(nickanderson_parsed:_etc_group.groups)",
+        meta => { "inventory", "attribute_name=Local Groups" };
+
+}
