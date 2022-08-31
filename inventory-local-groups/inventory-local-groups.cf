@@ -9,7 +9,8 @@ bundle agent _etc_groups
 #
 # **Inventory:**
 #
-# * `Local Groups` :: Local group names as parsed from /etc/group
+# * `Local Groups` :: Local group names as parsed from `/etc/group`
+# * `Local Group <group> Users` :: The users who are part of the local group `<group>`, defined when `nickanderson_inventory:want_local_group_users_inventory` is defined.
 {
   vars:
 
@@ -20,4 +21,10 @@ bundle agent _etc_groups
         string => "$(nickanderson_parsed:_etc_group.groups)",
         meta => { "inventory", "attribute_name=Local Groups" };
 
+    want_local_group_users_inventory::
+      "inventory_group_user[$(nickanderson_parsed:_etc_group.groups)-$(nickanderson_parsed:_etc_group.groups)][users])]"
+        string => "$(nickanderson_parsed:_etc_group.local_group[$(nickanderson_parsed:_etc_group.groups)][users])",
+        unless => and( isvariable( "nickanderson_parsed:_etc_group.groups)][users]"),
+                       strcmp( length( "nickanderson_parsed:_etc_group.groups)][users]"), "0" )),
+        meta => { "inventory", "attribute_name=Local Group $(nickanderson_parsed:_etc_group.groups) Users" };
 }

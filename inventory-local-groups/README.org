@@ -6,10 +6,13 @@
 - *Version*: =0.0.1=
 - *Description*: Inventories local groups based on variables defined by =library-parsed-local-groups=
 
+* Configuration
+
+** Classes
+- =nickanderson_inventory:want_local_group_users_inventory= :: When defined an inventory item for each local group with users specified locally is created.
+
 * Inventory
 
-- /Local groups/ :: List of local groups as determined by =library-parsed-local-groups=
+- /Local Groups/ :: List of local groups as determined by =library-parsed-local-groups=.
+- /Local Group <group> Users/ :: Users who are listed as members of =<group>= of  as determined by =library-parsed-local-groups=.
 
-* Requirements
-
-- CFEngine version 3.7.0 or greater
