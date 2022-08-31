@@ -25,7 +25,6 @@ bundle agent _etc_groups
       "inventory_group_user[$(nickanderson_parsed:_etc_group.groups)-$(with)]"
         with => "$(nickanderson_parsed:_etc_group.local_group[$(nickanderson_parsed:_etc_group.groups)][users])",
         string => "$(nickanderson_parsed:_etc_group.local_group[$(nickanderson_parsed:_etc_group.groups)][users])",
-        unless => and( isvariable( "nickanderson_parsed:_etc_group.local_group[$(nickanderson_parsed:_etc_group.groups)][users]"),
-                       strcmp( length( "nickanderson_parsed:_etc_group.local_group[$(nickanderson_parsed:_etc_group.groups)][users]"), "0" )),
+        if => regcmp( "\w+", "$(nickanderson_parsed:_etc_group.local_group[$(nickanderson_parsed:_etc_group.groups)][users])" ),
         meta => { "inventory", "attribute_name=Local Group $(nickanderson_parsed:_etc_group.groups) Users" };
 }
