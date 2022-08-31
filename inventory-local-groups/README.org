@@ -16,4 +16,5 @@
 - /Local Groups/ :: List of local groups as determined by =library-parsed-local-groups=.
 - /Local Group <group> Users/ :: Users who are listed as members of =<group>= of  as determined by =library-parsed-local-groups=.
 
-[[./media/host-info-inventory.png]]
+[[https://raw.githubusercontent.com/nickanderson/cfengine_local-users/local-group-inventory/media/host-info-inventory.png]]
+
