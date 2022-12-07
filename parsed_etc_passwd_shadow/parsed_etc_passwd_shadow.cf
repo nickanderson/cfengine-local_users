@@ -116,6 +116,11 @@ bundle agent parsed_etc_passwd_shadow
         string => "$(passwd_data[$(all_local_users)][4])",
         meta => { "noreport" };
 
+      "_passwd_passwd[$(all_local_users)]"
+        string => "$(passwd_data[$(all_local_users)][0])",
+        comment => "Field 2 'password' from /etc/passwd.",
+        meta => { "noreport" };
+
       "shell[$(all_local_users)]"
         string => "$(passwd_data[$(all_local_users)][5])",
         meta => { "noreport" };
